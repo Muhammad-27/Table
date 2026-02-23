@@ -16,24 +16,9 @@ const Jadval = () => {
     const fetchData = async (page = 1, pSize = 10) => {
         setLoading(true);
         try {
-            const baseUrl = 'https://kep.uz/api/users';
-            const params = new URLSearchParams();
-
-            if (search.trim()) {
-                params.append('search', search);
-            } else {
-                params.append('page', page);
-                params.append('pageSize', pSize);
-            }
-
-            if (lastSeenfilter.min !== '' && lastSeenfilter.min !== null && lastSeenfilter.min !== undefined) {
-                params.append('lastSeenMin', lastSeenfilter.min);
-            }
-            if (lastSeenfilter.max !== '' && lastSeenfilter.max !== null && lastSeenfilter.max !== undefined) {
-                params.append('lastSeenMax', lastSeenfilter.max);
-            }
-
-            const url = `${baseUrl}?${params.toString()}`;
+            const url = search.trim()
+                ? `https://kep.uz/api/users?search=${search}`
+                : `https://kep.uz/api/users?page=${page}&pageSize=${pSize}`
             const res = await axios.get(url);
 
             if (res.status === 200) {
@@ -49,18 +34,6 @@ const Jadval = () => {
             setLoading(false);
         }
     };
-
-    function filteredLastSeen() {
-        const filteredDara = data.filter(user => {
-            const lastSeen = new Date(user.lastSeen).getTime();
-            const min = lastSeenfilter.min ? new Date(lastSeenfilter.min).getTime() : null;
-            const max = lastSeenfilter.max ? new Date(lastSeenfilter.max).getTime() : null;
-            if (min !== null && lastSeen < min) return false;
-            if (max !== null && lastSeen > max) return false;
-            return true;
-        });
-        setData(filteredDara);
-    }
 
     const handleSearch = () => {
         setCurrentPage(1);
@@ -138,7 +111,7 @@ const Jadval = () => {
         {
             title: 'lastSeen',
             dataIndex: 'lastSeen',
-            
+            sorter: true
         },
     ];
 
