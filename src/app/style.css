@@ -1,54 +1,93 @@
-.fullname {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    gap: 10px;
+.container.main {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
-.searchs {
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 10px;
-}
-
-.inputs{
+.inputs {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-block: 50px;
+    margin-block: 30px;
+    gap: 15px;
 }
 
-.searchs input {
-    max-width: 450px;
-}
-
-.main {
-    width: 100%;
-    flex-grow: 1;
-}
-
-@media (max-width: 768px) {
-
-    .name,
-    .davlat {
-        display: none;
-    }
-    .username{
-        font-size: 12px;
-    }
-    .inputs{
-        flex-direction: column;
-        gap: 20px;
-    }
-    .searchs input {
-    max-width: 200px;
-}
-}
-.filter{
+.searchs,
+.filter {
     display: flex;
     align-items: center;
-    justify-content: end;
     gap: 10px;
+}
+
+/* --- Responsive 768px --- */
+@media (max-width: 768px) {
+    .inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchs,
+    .filter {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .searchs input {
+        flex-grow: 1;
+        max-width: none !important;
+    }
+
+    /* Ant Design Table ni Kartochka ko'rinishiga o'tkazish */
+    .ant-table-thead {
+        display: none;
+        /* Sarlavhalarni yashiramiz */
+    }
+
+    .ant-table-tbody>tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
+        padding: 10px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .ant-table-tbody>tr>td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none !important;
+        padding: 8px 5px !important;
+    }
+
+    /* Har bir TD oldidan sarlavha chiqarish uchun (Masalan: Ism: Ali) */
+    .ant-table-tbody>tr>td::before {
+        content: attr(data-label);
+        /* Bu qism JSX da qo'shilishi kerak */
+        font-weight: bold;
+        margin-right: 10px;
+        color: #555;
+    }
+
+    .fullname {
+        flex-direction: row;
+        gap: 5px;
+    }
+}
+
+/* --- 400px gacha moslashuv --- */
+@media (max-width: 400px) {
+    .filter {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .filter .ant-input-number {
+        width: 45%;
+    }
+
+    .filter button {
+        width: 100%;
+    }
 }

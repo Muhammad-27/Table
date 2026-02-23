@@ -11,7 +11,6 @@ const Jadval = () => {
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [ageFilter, setAgeFilter] = useState({ min: '', max: '' });
-    const [lastSeenfilter, setLastSeenFilter] = useState({ min: '', max: '' });
 
     const fetchData = async (page = 1, pSize = 10) => {
         setLoading(true);
@@ -59,6 +58,23 @@ const Jadval = () => {
         setData(filteredDara);
     }
 
+    const parseLastSeen = (str) => {
+        if (!str) return Infinity;
+
+        const val = parseInt(str);
+        if (isNaN(val)) return Infinity;
+
+
+        if (str.includes('year')) return val * 365;
+        if (str.includes('month')) return val * 30;
+        if (str.includes('week')) return val * 7;
+        if (str.includes('day')) return val;
+        if (str.includes('hour')) return val / 24;
+
+        return val;
+    };
+    // strlardi bo'rda kunga almashlidi keyin pasda shu ikki kundi ayradi shuytib tavadi oxirgi kirgan vaxtini  
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -68,6 +84,7 @@ const Jadval = () => {
             title: 'Foydalanuvchi',
             dataIndex: 'avatar',
             key: 'avatar',
+            onCell: () => ({ 'data-label': 'Avatar:' }),
             render: (text) => <Avatar size='large' src={text} />,
             width: 80
         },
@@ -75,6 +92,7 @@ const Jadval = () => {
         {
             title: 'Name',
             key: 'fullname',
+            onCell: () => ({ 'data-label': 'F.I.U:' }),
             render: (_, record) => (
                 <div className="fullname">
                     <span className="username" style={{ fontWeight: 'bold', display: 'block' }}>
@@ -100,18 +118,25 @@ const Jadval = () => {
         {
             title: 'Activity',
             dataIndex: 'activityRating',
+            onCell: () => ({ 'data-label': 'Activity:' }),
             sorter: (a, b) => b.activityRating - a.activityRating,
         },
 
         {
             title: 'Kepcoin',
             dataIndex: 'kepcoin',
+            onCell: () => ({ 'data-label': 'Kepcoin:' }),
             sorter: (a, b) => b.kepcoin - a.kepcoin,
         },
         {
-            title: 'lastSeen',
             dataIndex: 'lastSeen',
-            sorter: true
+            key: 'lastSeen',
+            onCell: () => ({ 'data-label': 'lastSeen:' }),
+            sorter: (a, b) => {
+                const timeA = parseLastSeen(a.lastSeen);
+                const timeB = parseLastSeen(b.lastSeen);
+                return timeA - timeB;
+            },
         },
     ];
 
