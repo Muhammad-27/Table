@@ -1,12 +1,7 @@
 import { Avatar, Button, Input, Table } from "antd";
-
 import axios from "axios";
-
 import { useEffect, useState } from "react";
-
 import './style.css';
-
-
 
 const Jadval = () => {
     const [data, setData] = useState([]);
@@ -15,10 +10,6 @@ const Jadval = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
-
-
-
-
 
     const fetchData = async (page = 1, pSize = 10) => {
         setLoading(true);
@@ -31,9 +22,8 @@ const Jadval = () => {
 
 
             if (res.status === 200) {
-                const resultData = res.data.data || res.data;
-
-                const resultTotal = res.data.total || (Array.isArray(resultData) ? resultData.length : 0);
+                const resultData = res.data.data;
+                const resultTotal = res.data.total;
 
                 setData(Array.isArray(resultData) ? resultData : []);
                 setTotal(resultTotal);
@@ -45,16 +35,10 @@ const Jadval = () => {
         }
     };
 
-
-
-
-
     const handleSearch = () => {
         setCurrentPage(1);
         fetchData(1, pageSize);
     };
-
-
 
     const handleTableChange = (pagination) => {
         setCurrentPage(pagination.current);
@@ -62,13 +46,9 @@ const Jadval = () => {
         fetchData(pagination.current, pagination.pageSize);
     };
 
-
-
     useEffect(() => {
         fetchData();
     }, []);
-
-
 
     const columns = [
         {
@@ -118,10 +98,9 @@ const Jadval = () => {
         {
             title: 'lastSeen',
             dataIndex: 'lastSeen',
+            sorter: true    
         },
     ];
-
-
 
     return (
         <div className="container main" style={{ padding: '20px' }}>
@@ -151,6 +130,7 @@ const Jadval = () => {
                     pageSize: pageSize,
                     showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
+
                 }}
                 scroll={{ x: 'max-content', y: 500 }}
             />
