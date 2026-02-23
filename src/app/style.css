@@ -1,0 +1,35 @@
+.fullname {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.searchs {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 10px;
+}
+
+.searchs input {
+    max-width: 450px;
+}
+
+.main {
+    width: 100%;
+    flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+
+    .name,
+    .davlat {
+        display: none;
+    }
+    .username{
+        font-size: 12px;
+    }
+
+}
