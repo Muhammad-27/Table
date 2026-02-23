@@ -1,4 +1,4 @@
-import { Avatar, Button, Input, Table } from "antd";
+import { Avatar, Button, Input, InputNumber, Table } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import './style.css';
@@ -10,16 +10,31 @@ const Jadval = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
+    const [ageFilter, setAgeFilter] = useState({ min: '', max: '' });
+    const [lastSeenfilter, setLastSeenFilter] = useState({ min: '', max: '' });
 
     const fetchData = async (page = 1, pSize = 10) => {
         setLoading(true);
         try {
-            const url = search.trim()
-                ? `https://kep.uz/api/users/search?q=${search}`
-                : `https://kep.uz/api/users?page=${page}&pageSize=${pSize}`;
+            const baseUrl = 'https://kep.uz/api/users';
+            const params = new URLSearchParams();
+
+            if (search.trim()) {
+                params.append('search', search);
+            } else {
+                params.append('page', page);
+                params.append('pageSize', pSize);
+            }
+
+            if (lastSeenfilter.min !== '' && lastSeenfilter.min !== null && lastSeenfilter.min !== undefined) {
+                params.append('lastSeenMin', lastSeenfilter.min);
+            }
+            if (lastSeenfilter.max !== '' && lastSeenfilter.max !== null && lastSeenfilter.max !== undefined) {
+                params.append('lastSeenMax', lastSeenfilter.max);
+            }
+
+            const url = `${baseUrl}?${params.toString()}`;
             const res = await axios.get(url);
-
-
 
             if (res.status === 200) {
                 const resultData = res.data.data;
@@ -35,6 +50,18 @@ const Jadval = () => {
         }
     };
 
+    function filteredLastSeen() {
+        const filteredDara = data.filter(user => {
+            const lastSeen = new Date(user.lastSeen).getTime();
+            const min = lastSeenfilter.min ? new Date(lastSeenfilter.min).getTime() : null;
+            const max = lastSeenfilter.max ? new Date(lastSeenfilter.max).getTime() : null;
+            if (min !== null && lastSeen < min) return false;
+            if (max !== null && lastSeen > max) return false;
+            return true;
+        });
+        setData(filteredDara);
+    }
+
     const handleSearch = () => {
         setCurrentPage(1);
         fetchData(1, pageSize);
@@ -45,6 +72,19 @@ const Jadval = () => {
         setPageSize(pagination.pageSize)
         fetchData(pagination.current, pagination.pageSize);
     };
+
+    function filteredAge() {
+        const filteredDara = data.filter(user => {
+            const coin = user.kepcoin;
+            const min = ageFilter.min;
+            const max = ageFilter.max;
+
+            if (min !== '' && coin < min) return false;
+            if (max !== '' && coin > max) return false;
+            return true;
+        })
+        setData(filteredDara);
+    }
 
     useEffect(() => {
         fetchData();
@@ -98,24 +138,42 @@ const Jadval = () => {
         {
             title: 'lastSeen',
             dataIndex: 'lastSeen',
-            sorter: true    
+            
         },
     ];
 
     return (
-        <div className="container main" style={{ padding: '20px' }}>
-            <div className="searchs" style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-                <Input
-                    placeholder="Qidiruv..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onPressEnter={handleSearch} //shundetib yazsa bo'ladi akan enterdi basqanda ishlashi uchun
-                    style={{ width: '300px' }}
-                />
+        <div className="container main" >
+            <div className="inputs">
+                <div className="searchs">
+                    <Input
+                        placeholder="Qidiruv..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        onPressEnter={handleSearch} //shundetib yazsa bo'ladi akan enterdi basqanda ishlashi uchun
+                        style={{ width: '300px' }}
+                    />
 
-                <Button type="primary" onClick={handleSearch} loading={loading}>
-                    🔍 Qidirish
-                </Button>
+                    <Button type="primary" onClick={handleSearch} loading={loading}>
+                        🔍 Qidirish
+                    </Button>
+                </div>
+                <div className="filter">
+                    <InputNumber
+                        value={ageFilter.min}
+                        onChange={(value) => setAgeFilter({ ...ageFilter, min: value })}
+                        placeholder="Minimal yosh"
+                        onPressEnter={filteredAge}
+                    />
+                    <InputNumber
+                        value={ageFilter.max}
+                        onPressEnter={filteredAge}
+                        onChange={(value) => setAgeFilter({ ...ageFilter, max: value })}
+                        placeholder="Maksimal yosh"
+                    />
+
+                    <Button type="primary " loading={loading} onClick={() => filteredAge()}>Filter</Button>
+                </div>
             </div>
 
             <Table

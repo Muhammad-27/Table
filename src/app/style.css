@@ -9,8 +9,15 @@
 .searchs {
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: start;
     gap: 10px;
+}
+
+.inputs{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-block: 50px;
 }
 
 .searchs input {
@@ -31,5 +38,17 @@
     .username{
         font-size: 12px;
     }
-
+    .inputs{
+        flex-direction: column;
+        gap: 20px;
+    }
+    .searchs input {
+    max-width: 200px;
+}
+}
+.filter{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 10px;
 }
